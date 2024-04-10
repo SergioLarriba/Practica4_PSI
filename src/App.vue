@@ -1,24 +1,58 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
-</script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="Hola Mundo" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+  <div id="app" class="container">
+    <form @submit.prevent="submitForm">
+      <div>
+        <label for="email">Email:</label>
+        <input type="email" id="email" v-model="email" required>
+      </div>
+      <div>
+        <label for="password">Password:</label>
+        <input type="password" id="password" v-model="password" required>
+      </div>
+      <div>
+        <label for="confirmPassword">Confirm Password:</label>
+        <input type="password" id="confirmPassword" v-model="confirmPassword" required>
+      </div>
+      <div>
+        <button type="submit">Sign Up</button>
+      </div>
+    </form>
+  </div>
 </template>
+
+
+<script>
+import axios from 'axios';
+export default {
+  data() {
+    return {
+      email: '',
+      password: '',
+      confirmPassword: ''
+    }
+  },
+  methods: {
+    submitForm() {
+      if (this.password !== this.confirmPassword) {
+        alert('Passwords do not match');
+        return;
+      }
+      axios.post('http://localhost:3000/signup', {
+        email: this.email,
+        password: this.password
+      })
+      .then(response => {
+        console.log(response.data);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+    }
+  }
+}
+</script>
+
 
 <style scoped>
 header {
