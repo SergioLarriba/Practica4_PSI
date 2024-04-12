@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import signup from '../views/signup.vue'
+import login from '../views/login.vue'
+import logout from '../views/logout.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -9,12 +11,20 @@ const router = createRouter({
       name: 'signup',
       component: signup
     },
-    /* Ruta por defecto 
     {
       path: '/', 
-      redirect: '/login'
+      redirect: '/log-in', 
+    }, 
+    {
+      path: '/log-in',
+      name: 'login',
+      component: login
+    }, 
+    {
+      path: '/log-out', 
+      name: 'logout',
+      component: logout
     }
-    */
   ]
 })
 
