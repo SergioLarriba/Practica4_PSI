@@ -1,30 +1,20 @@
-
+<!-- App.vue -->
 <template>
   <div id="app" class="container">
-    <form @submit.prevent="submitForm">
-      <div>
-        <label for="email">Email:</label>
-        <input type="email" id="email" v-model="email" required>
-      </div>
-      <div>
-        <label for="password">Password:</label>
-        <input type="password" id="password" v-model="password" required>
-      </div>
-      <div>
-        <label for="confirmPassword">Confirm Password:</label>
-        <input type="password" id="confirmPassword" v-model="confirmPassword" required>
-      </div>
-      <div>
-        <button type="submit">Sign Up</button>
-      </div>
-    </form>
+    <!--Inclusión del componente signup-->
+    <signup></signup>
   </div>
 </template>
 
 
+
 <script>
-import axios from 'axios';
+import Signup from './components/signup.vue'; 
 export default {
+  components: {
+    Signup
+  },
+  /*
   data() {
     return {
       email: '',
@@ -49,7 +39,7 @@ export default {
         console.log(error);
       });
     }
-  }
+  } */
 }
 </script>
 
