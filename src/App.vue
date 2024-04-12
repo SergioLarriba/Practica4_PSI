@@ -1,8 +1,8 @@
 <!-- App.vue -->
 <template>
   <div id="app" class="container">
-    <!--Inclusión del componente signup-->
-    <signup></signup>
+    <!-- Renderiza el componente correspondiente a la ruta actual -->
+    <router-view></router-view>
   </div>
 </template>
 
@@ -14,96 +14,14 @@ export default {
   components: {
     Signup
   },
-  /*
-  data() {
-    return {
-      email: '',
-      password: '',
-      confirmPassword: ''
-    }
-  },
-  methods: {
-    submitForm() {
-      if (this.password !== this.confirmPassword) {
-        alert('Passwords do not match');
-        return;
-      }
-      axios.post('http://localhost:3000/signup', {
-        email: this.email,
-        password: this.password
-      })
-      .then(response => {
-        console.log(response.data);
-      })
-      .catch(error => {
-        console.log(error);
-      });
-    }
-  } */
 }
 </script>
 
 
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+<style>
+  .container {
+    display: flex; 
+    background-color: rgb(255, 255, 255);
+    border-radius: 20px;
   }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
 </style>
