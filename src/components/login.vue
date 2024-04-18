@@ -10,13 +10,25 @@
 					Do not have an account? <router-link to="/sign-up">Sign Up</router-link>
 				</p>
 				<!--Email-->
-				<input type="email" id="email" name="email" placeholder="Email address" required>
+				<input 
+					placeholder="Email"
+					v-model="user_loguea.email"
+					type="email"
+					data-cy="email"
+					required
+				> 
 				<!--Password-->
-				<input type="password" id="password" name="password" placeholder="Password" required>
+				<input
+					placeholder="Password"
+					v-model="user_loguea.password"
+					type="password"
+					data-cy="password"
+					required
+				>
 				<!--Botón de LogIn-->
 				<button type="submit" value="LogIn">Log In</button>
 				<p>
-					Welcome to our chess page. If you want to kwnow what led us to create yet another chess site, then read on... 
+					Welcome to our chess page. If you want to kwnow what led us to create yet another chess site, then read on... <router-link to="/here">here</router-link>
 				</p>
 			</div>
 			<aside>
@@ -28,40 +40,34 @@
 </template>
 
 <script>
-
-	import { useCounterStore } from '../stores/counter.js';
+	import { ref } from 'vue';
 
 	export default {
-		methods: {
-			async enviarLogIn() {
-			let email = document.getElementById('email').value;
-			let password = document.getElementById('password').value;
+		// Nombre del componente 
+		name: "login", 
 
-			// Llamamos a la API
-			const response = await fetch('http://host:port/api/login', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ email, password })
-			});
+		setup(props, ctx) {
+			const user_loguea = ref({
+				email: '',
+				password: '',
+			})
 
-			if (response.ok) {
-				const data = await response.json();
-
-				//Usamos Pinia
-				const store = useCounterStore();
-				store.setToken(data.token);
-				store.setPlayerId(data.playerId);
-
-				//Redirección a la página de creación de partidas
-				this.$router.push('/creategame');
-			} else {
-				// Error
-				console.error('Invalid username or password');
+			const enviarLogIn = () => {
+				ctx.emit('logIn', user_loguea.value.email, user_loguea.value.password)
 			}
-			}
-		}
-	}
 
+			
+
+
+			return {
+				user_loguea, 
+
+				enviarLogIn, 
+			}
+		}, 
+	}; 
+
+	
 </script>
 
 <style>
