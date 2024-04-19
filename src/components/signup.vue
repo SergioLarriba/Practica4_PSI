@@ -62,25 +62,25 @@
 			const signUp = async () => {
 				// Comprobamos que las contraseñas coincidan
 				if (user.value.password !== user.value.confirmPassword) {
-						alert('Las contraseñas no coinciden'); 
-						return;
+					alert('Las contraseñas no coinciden'); 
+					return;
 				}
 
 				// Llamo a la Api para registrarme 
 				const api_call = await fetch('https://practica3-psi.onrender.com/api/v1/users/', {
-						method: 'POST',
-						headers: { 'Content-Type': 'application/json' },
-						body: JSON.stringify({ email: user.value.email, username: user.value.email, password: user.value.password })
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ email: user.value.email, username: user.value.email, password: user.value.password })
 				}); 
 				
 				if (api_call.ok) {
-						// Obtenemos el email del usuario registrado para guardarlo en pinia
-						const response = await api_call.json();
-						const email = response.email;
-						
-						// Usamos Pinia para guardar el email 
-						const store = useCounterStore(); 
-						store.setEmail(email);
+					// Obtenemos el email del usuario registrado para guardarlo en pinia
+					const response = await api_call.json();
+					const email = response.email;
+					
+					// Usamos Pinia para guardar el email 
+					const store = useCounterStore(); 
+					store.setEmail(email);
 				}
 
 				alert('Usuario registrado con éxito')
@@ -96,5 +96,6 @@
 </script>
 
 <style>
+	@import url('../assets/input.css');
 	@import url('../assets/login_signup.css'); 
 </style>
