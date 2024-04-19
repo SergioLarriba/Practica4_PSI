@@ -1,6 +1,6 @@
 <!--login.vue-->
 <template>
-	<form @submit.prevent="enviarLogIn"> 
+	<form @submit.prevent="logIn"> 
 		<div class="container-padre">
 			<div class="container">
 				<h1>
@@ -12,7 +12,7 @@
 				<!--Email-->
 				<input 
 					placeholder="Email"
-					v-model="user_loguea.email"
+					v-model="email"
 					type="email"
 					data-cy="email"
 					required
@@ -20,7 +20,7 @@
 				<!--Password-->
 				<input
 					placeholder="Password"
-					v-model="user_loguea.password"
+					v-model="password"
 					type="password"
 					data-cy="password"
 					required
@@ -41,28 +41,44 @@
 
 <script>
 	import { ref } from 'vue';
+	import { useCounterStore } from '../stores/counter.js';
 
 	export default {
 		// Nombre del componente 
 		name: "login", 
 
-		setup(props, ctx) {
-			const user_loguea = ref({
-				email: '',
-				password: '',
-			})
+		setup() {
+			const email = ref(''); 
+			const password = ref('');
 
-			const enviarLogIn = () => {
-				ctx.emit('logIn', user_loguea.value.email, user_loguea.value.password)
+			const logIn = async () => {
+				// Llamo a la api para loguearme y aquí me devuelve el token
+				const api_call_login = await fetch('https://practica3-psi.onrender.com/api/v1/mytokenlogin/', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ username: email.value, password: password.value })
+				}); 
+
+				// Guardo el token en pinia 
+				if (api_call_login.ok) {
+					const response = await api_call_login.json();
+					const token = response.auth_token;
+					const playerId = response.user_id; 
+
+					// Usamos Pinia para guardar el token 
+					const store = useCounterStore();
+					store.setToken(token);
+					store.setPlayerId(playerId);
+
+					console.log(store.token, store.playerId)
+				}
 			}
 
-			
-
-
 			return {
-				user_loguea, 
+				email, 
+				password, 
 
-				enviarLogIn, 
+				logIn, 
 			}
 		}, 
 	}; 
