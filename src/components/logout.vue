@@ -1,11 +1,11 @@
 <!--login.vue-->
 <template>
 	<h1>Log Out</h1>
-	<p>{{ message }}</p>
+	<button @click="logOut">LogOut</button>
 </template>
 
 <script>
-	import { ref, onMounted } from 'vue';
+	import { ref } from 'vue';
 	import { useRouter } from 'vue-router';
 	import { useCounterStore } from '../stores/counter.js';
 
@@ -16,7 +16,6 @@
 			const router = useRouter(); 
 			const message = ref('');
 			const store = useCounterStore();
-			let countdown = ref(5);
 
 			// Tengo que pasarle el token en la consulta para cerrar sesión 
 			const logOut = async () => {
@@ -31,22 +30,15 @@
 
 				if (api_call.ok) {
 					store.token = null; // Borra el token de la tienda
-					message.value = 'Has cerrado sesión. Serás redirigido a la página principal en ' + countdown.value + ' segundos.';
-					
-					const intervalId = setInterval(() => {
-						countdown.value--;
-						message.value = 'Has cerrado sesión. Serás redirigido a la página principal en ' + countdown.value + ' segundos.';
-						if (countdown.value === 0) {
-							clearInterval(intervalId);
-							router.push('/log-in');
-						}
-					}, 1000);
+          //store.playerId = null; // Borra el playerId de la tienda
+					message.value = 'Has cerrado sesión. Serás redirigido a la página principal en 5 segundos.';
+					setTimeout(() => {
+						router.push('/log-in');
+					}, 5000);
 				} else {
 					message.value = 'Error al cerrar sesión';
 				}
 			}; 
-
-			onMounted(logOut);
 
 			return {
 				message, 
