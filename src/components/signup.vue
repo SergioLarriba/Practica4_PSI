@@ -95,7 +95,7 @@
 	}; 
 </script>
 
-<style>
+<style scoped>
 	@import url('../assets/input.css');
 	@import url('../assets/login_signup.css'); 
 </style>

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import signup from '../components/signup.vue'
 import login from '../components/login.vue'
 import logout from '../components/logout.vue'
+import creategame from '../components/creategame.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,6 +25,11 @@ const router = createRouter({
       path: '/log-out', 
       name: 'logout',
       component: logout
+    }, 
+    {
+      path: '/creategame', 
+      name: 'creategame',
+      component: creategame, 
     }
   ]
 })

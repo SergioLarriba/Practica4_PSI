@@ -42,6 +42,7 @@
 <script>
 	import { ref } from 'vue';
 	import { useCounterStore } from '../stores/counter.js';
+	import { useRouter } from 'vue-router';
 
 	export default {
 		// Nombre del componente 
@@ -50,6 +51,7 @@
 		setup() {
 			const email = ref(''); 
 			const password = ref('');
+			const router = useRouter();
 
 			const logIn = async () => {
 				// Llamo a la api para loguearme y aquí me devuelve el token
@@ -71,6 +73,9 @@
 					store.setPlayerId(playerId);
 
 					console.log(store.token, store.playerId)
+
+					// Le dirigimos a la pagina de create game 
+					router.push('/creategame'); // Redirige al usuario a la pantalla de inicio de sesión
 				}
 			}
 
@@ -86,7 +91,7 @@
 	
 </script>
 
-<style>
+<style scoped>
 	@import url('../assets/input.css');
 	@import url('../assets/login_signup.css'); 
 </style>
