@@ -23,31 +23,45 @@
 <script>
 	import { ref } from 'vue';
 	import backgroundImage from '/images/pieza-ajedrez-dramatica.jpg'
+	import { useCounterStore } from '../stores/counter.js';
 
 	export default {
 		// Nombre del componente 
 		name: 'creategame', 
 		setup() {
 			const selectedColor = ref(''); 
+			const store = useCounterStore();
 
 			// Funcion para crear un juego 
-			const createGame = () => {
+			const createGame = async () => {
 				// Join Specific game -> funcionalidad no implementada
 				if (selectedColor.value === 'join-specific-game') {
 					console.log('Creating game...');
-				} else {
-					// Join Any Game -> funcionalidad si implementada
-					// 1 - Buscar si hay juegos disponibles con 1 jugador ausente 
 				}
-			}
+				// Join Any Game -> Petición a la api 
+				const api_call_create_game = await fetch ('https://practica3-psi.onrender.com/api/v1/games/', {
+					method: 'POST',
+					headers: { 
+						'Content-Type': 'application/json',
+						'Authorization': `token ${store.token}` // Aquí se envía el token en el encabezado
+					},
+				}); 
+
+				if (api_call_create_game.ok) {
+					const response = await api_call_create_game.json();
+					const gameId = response.id;
+					console.log(gameId);
+					store.setGameId(gameId);
+				}
+			}; 
 
 			return {
 				selectedColor, 
 				backgroundImage, 
 				createGame, 
 			}
-		}, 
-	}; 
+		}
+	}
 </script>
 
 <style scoped>

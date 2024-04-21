@@ -6,6 +6,7 @@ export const useCounterStore = defineStore('counter', () => {
   const token = ref('')
   const playerId = ref('')
   const email = ref('')
+  const gameId = ref('')
 
   const doubleCount = computed(() => count.value * 2)
   function increment() {
@@ -20,6 +21,9 @@ export const useCounterStore = defineStore('counter', () => {
   function setEmail(value) {
     email.value = value
   }
+  function setGameId(value) {
+    gameId.value = value
+  }
 
-  return { count, doubleCount, increment , setToken, setPlayerId, token, playerId, setEmail, email}
+  return { count, doubleCount, increment , setToken, setPlayerId, token, playerId, setEmail, email, gameId, setGameId}
 })
