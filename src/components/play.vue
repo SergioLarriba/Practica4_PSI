@@ -1,6 +1,6 @@
 <template>
     <div>
-        <TheChessboard: fen="fen" @move="move" />
+        <TheChessboard/>
 
         <div>
             <p>Game ID: {{ gameID }}</p>
