@@ -39,56 +39,59 @@
 
 
 <script>
-import { TheChessboard } from 'vue3-chessboard';
-import { reactive } from 'vue';
-import 'vue3-chessboard/style.css';
+    import { TheChessboard } from 'vue3-chessboard';
+    import { ref, onMounted, watch } from 'vue';
+    import { useCounterStore } from '../stores/counter.js';
+    import 'vue3-chessboard/style.css';
 
-const boardConfig = {
+    const boardConfig = {
         coordinates: false,
         orientation: 'white',
         autoCastle: false,
     };
 
-let boardAPI = 'white';
-    
-export default {
-    components: {
-        TheChessboard,
-    },
+    let boardAPI = 'white';
 
-    
-    data() {
-        return {
-            fen: 'start',
-            gameID: null,
-            materialAdvantage: 0,
-            moves: [],
-        };
-    },
-    methods: {
-        handleMove(move) {
-            this.fen = move.fen;
-            const newMove = {
-                player: move.color === 'w' ? 'White' : 'Black',
-                move_from: move.from,
-                move_to: move.to,
-            };
-            this.moves.push(newMove);
-            this.$nextTick(() => {
-                this.scrollMovesTable();
+    export default {
+        components: {
+            TheChessboard,
+        },
+        setup() {
+            const store = useCounterStore();
+            const fen = ref('start');
+            const gameID = ref(store.gameId);
+            const materialAdvantage = ref(0);
+            const moves = ref([]);
+
+            const handleMove = (move) => {
+                fen.value = move.fen;
+                const newMove = {
+                    player: move.color === 'w' ? 'White' : 'Black',
+                    move_from: move.from,
+                    move_to: move.to,
+                };
+                moves.value.push(newMove);
+                console.log(store.gameId)
+            }; 
+
+            onMounted(() => {
+                watch(moves, () => {
+                    const movesTableContainer = document.querySelector('.moves-table-container');
+                    if (movesTableContainer) {
+                        movesTableContainer.scrollTop = movesTableContainer.scrollHeight;
+                    }
+                });
             });
-        },
-        scrollMovesTable() {
-            const movesTableContainer = document.querySelector('.moves-table-container');
-            if (movesTableContainer) {
-                movesTableContainer.scrollTop = movesTableContainer.scrollHeight;
+
+            return {
+                fen,
+                gameID,
+                materialAdvantage,
+                moves,
+                handleMove,
             }
-        },
-        
-    },
-};
-
-
+        }
+    }
 </script>
 
 

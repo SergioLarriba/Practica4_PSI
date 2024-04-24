@@ -14,7 +14,6 @@
 
 		setup() {
 			const router = useRouter(); 
-			const message = ref('');
 			const store = useCounterStore();
 
 			// Tengo que pasarle el token en la consulta para cerrar sesión 
@@ -30,18 +29,11 @@
 
 				if (api_call.ok) {
 					store.token = null; // Borra el token de la tienda
-          //store.playerId = null; // Borra el playerId de la tienda
-					message.value = 'Has cerrado sesión. Serás redirigido a la página principal en 5 segundos.';
-					setTimeout(() => {
-						router.push('/log-in');
-					}, 5000);
-				} else {
-					message.value = 'Error al cerrar sesión';
-				}
+					router.push('/log-in');
+				} 
 			}; 
 
 			return {
-				message, 
 				logOut, 
 			}
 		}

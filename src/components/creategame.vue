@@ -24,6 +24,7 @@
 	import { ref } from 'vue';
 	import backgroundImage from '/images/pieza-ajedrez-dramatica.jpg'
 	import { useCounterStore } from '../stores/counter.js';
+	import { useRouter } from 'vue-router';
 
 	export default {
 		// Nombre del componente 
@@ -31,6 +32,7 @@
 		setup() {
 			const selectedColor = ref(''); 
 			const store = useCounterStore();
+			const router = useRouter();
 
 			// Funcion para crear un juego 
 			const createGame = async () => {
@@ -39,26 +41,31 @@
 					console.log('Creating game...');
 				}
 				// Join Any Game -> Petición a la api 
-				const api_call_create_game = await fetch ('https://practica3-psi.onrender.com/api/v1/games/', {
-					method: 'POST',
-					headers: { 
-						'Content-Type': 'application/json',
-						'Authorization': `token ${store.token}` // Aquí se envía el token en el encabezado
-					},
-				}); 
+				else if (selectedColor.value === 'join-any-game') {
+					const api_call_create_game = await fetch ('https://practica3-psi.onrender.com/api/v1/games/', {
+						method: 'POST',
+						headers: { 
+							'Content-Type': 'application/json',
+							'Authorization': `token ${store.token}` // Aquí se envía el token en el encabezado
+						},
+					}); 
 
-				if (api_call_create_game.ok) {
-					const response = await api_call_create_game.json();
-					const gameId = response.id;
-					console.log(gameId);
-					store.setGameId(gameId);
+					if (api_call_create_game.ok) {
+						const response = await api_call_create_game.json();
+						const gameId = response.id;
+						store.setGameId(gameId);
+						console.log(store.gameId);
+
+						// Redirigir a la página de juego
+						router.push('/play')
+					}
 				}
 			}; 
 
 			return {
-				selectedColor, 
-				backgroundImage, 
-				createGame, 
+					selectedColor, 
+					backgroundImage, 
+					createGame, 
 			}
 		}
 	}
