@@ -1,6 +1,16 @@
 <template>
     <div>
-        <TheChessboard/>
+        <TheChessboard
+            :board-config="boardConfig"
+            :player-color="playerColor"
+            @board-created="(api) => (boardAPI = api)"
+            @checkmate="handleCheckmate"
+            @move="handleMove"
+            @stalemate="handleStalemate"
+            @draw="handleDraw"
+            @promotion="handlePromotion"
+        >
+        </TheChessboard>
 
         <div>
             <p>Game ID: {{ gameID }}</p>
@@ -19,15 +29,12 @@
             <tbody>
                 <tr v-for="(move, index) in moves" :key="index">
                     <td>{{ index + 1 }}</td>
-                    <td>{{ move.white }}</td>
-                    <td>{{ move.black }}</td>
+                    <td>{{ move.player }}</td>
+                    <td>{{ move.move_from }} - {{ move.move_to }}</td>
                 </tr>
             </tbody>
         </table>
     </div>
-
-
-
 </template>
 
 
@@ -41,14 +48,15 @@ const boardConfig = {
         orientation: 'white',
         autoCastle: false,
     };
+
+let boardAPI = 'white';
     
 export default {
     components: {
         TheChessboard,
     },
 
-
-
+    
     data() {
         return {
             fen: 'start',
@@ -58,10 +66,23 @@ export default {
         };
     },
     methods: {
-        move(move) {
+        handleMove(move) {
             this.fen = move.fen;
-
-            this.moves.push(move);
+            const newMove = {
+                player: move.color === 'w' ? 'White' : 'Black',
+                move_from: move.from,
+                move_to: move.to,
+            };
+            this.moves.push(newMove);
+            this.$nextTick(() => {
+                this.scrollMovesTable();
+            });
+        },
+        scrollMovesTable() {
+            const movesTableContainer = document.querySelector('.moves-table-container');
+            if (movesTableContainer) {
+                movesTableContainer.scrollTop = movesTableContainer.scrollHeight;
+            }
         },
         
     },
@@ -71,3 +92,10 @@ export default {
 </script>
 
 
+<style>
+.moves-table-container {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+</style>
