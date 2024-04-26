@@ -40,15 +40,10 @@
 
 <script>
     import { TheChessboard } from 'vue3-chessboard';
-    import { ref, onMounted, watch } from 'vue';
+    import { ref, onMounted, watch, computed, reactive } from 'vue';
     import { useCounterStore } from '../stores/counter.js';
     import 'vue3-chessboard/style.css';
 
-    const boardConfig = {
-        coordinates: false,
-        orientation: 'white',
-        autoCastle: false,
-    };
 
     let boardAPI = 'white';
 
@@ -57,9 +52,20 @@
             TheChessboard,
         },
         setup() {
+
+            const boardConfig = reactive({
+                coordinates: false,
+                orientation: 'white',
+                autoCastle: false,
+            });
+
+            const playerColor = computed(() => {
+                return boardAPI;
+            });
+        
             const store = useCounterStore();
             const fen = ref('start');
-            const gameID = ref(store.gameId);
+            const gameID = computed(() => store.gameId);
             const materialAdvantage = ref(0);
             const moves = ref([]);
 
@@ -83,12 +89,34 @@
                 });
             });
 
+            const handleCheckmate = (isMated) => { 
+            alert(`${isMated} is mated`);
+            };
+
+            const handlePromotion = (promotion) => {
+                alert(`Promotion to ${promotion}`);
+            };
+
+            const handleStalemate = () => {
+                alert('Stalemate');
+            };
+
+            const handleDraw = () => {
+                alert('Draw');
+            };
+
+
             return {
                 fen,
                 gameID,
                 materialAdvantage,
                 moves,
                 handleMove,
+                handleCheckmate,
+                handlePromotion,
+                handleStalemate,
+                handleDraw,
+                boardConfig,
             }
         }
     }
