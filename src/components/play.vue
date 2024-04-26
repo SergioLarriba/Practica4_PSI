@@ -60,14 +60,21 @@
             });
 
             const playerColor = computed(() => {
-                return boardAPI;
+                return boardAPI.value;
             });
         
             const store = useCounterStore();
             const fen = ref('start');
-            const gameID = computed(() => store.gameId);
+            const gameID = computed(() => store.gameId.value);
+            const token = computed(() => store.token.value);
+
+            alert('gameID: ' + store.gameId.value);
+            alert('token ' + store.token.value);
+
             const materialAdvantage = ref(0);
             const moves = ref([]);
+
+            const socket = ref(null);
 
             const handleMove = (move) => {
                 fen.value = move.fen;
@@ -77,10 +84,32 @@
                     move_to: move.to,
                 };
                 moves.value.push(newMove);
-                console.log(store.gameId)
+
             }; 
 
             onMounted(() => {
+                
+
+                const url = `ws://localhost:8000/ws/play/${gameID.value}/?token=${token.value}`;
+                socket.value = new WebSocket(url);
+
+                socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === 'move') {
+                boardAPI.value?.move(data.move);
+                }
+                };
+                socket.onopen = () => {
+                    console.log('Connected to the server');
+                };
+                socket.onerror = (error) => {
+                    console.error('Error:', error);
+                };
+                socket.onclose = () => {
+                    console.log('Connection closed');
+                }; 
+
+
                 watch(moves, () => {
                     const movesTableContainer = document.querySelector('.moves-table-container');
                     if (movesTableContainer) {
@@ -117,6 +146,7 @@
                 handleStalemate,
                 handleDraw,
                 boardConfig,
+                playerColor,
             }
         }
     }
