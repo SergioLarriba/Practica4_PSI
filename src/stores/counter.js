@@ -25,5 +25,13 @@ export const useCounterStore = defineStore('counter', () => {
     gameId.value = value
   }
 
-  return { count, doubleCount, increment , setToken, setPlayerId, token, playerId, setEmail, email, gameId, setGameId}
+  function getGameId() {
+    return gameId.value
+  }
+
+  function getToken() {
+    return token.value
+  }
+
+  return { count, doubleCount, increment , setToken, getToken, setPlayerId, token, playerId, setEmail, email, gameId, setGameId, getGameId}
 })

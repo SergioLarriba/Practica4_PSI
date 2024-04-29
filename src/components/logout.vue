@@ -1,6 +1,6 @@
 <!--login.vue-->
 <template>
-	<h1>Log Out</h1>
+	<h1 data-cy="logoutPage">Log Out</h1>
 	<button @click="logOut">LogOut</button>
 </template>
 

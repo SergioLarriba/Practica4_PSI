@@ -11,7 +11,7 @@
 					placeholder="Email"
 					v-model="user.email"
 					type="email"
-					data-cy="email"
+					data-cy="username"
 					required
 				> 
 				<!--Password-->
@@ -19,19 +19,19 @@
 					placeholder="Password"
 					v-model="user.password"
 					type="password"
-					data-cy="password"
+					data-cy="password1"
 					required
 				>
 				<!--Confirm Password-->
 				<input
-					placeholder="Confirm Passwrod"
+					placeholder="Confirm Password"
 					v-model="user.confirmPassword"
 					type="password"
-					data-cy="comfirm-password"
+					data-cy="password2"
 					required
 				>
 				<!--Botón de envío-->
-				<button type="submit" value="SignUp">Sign Up</button> 
+				<button type="submit" value="SignUp" data-cy="signup-button">Sign Up</button> 
 			</div>
 			<aside>
 				<img src="images/chess_image.jpg" alt="">
@@ -88,8 +88,8 @@
 			}; 
 
 			return { 
-					user, 
-					signUp, 
+				user, 
+				signUp, 
 			}
 		}, 
 	}; 

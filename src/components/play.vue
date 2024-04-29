@@ -18,7 +18,7 @@
         </div>
 
         <!-- Tabla movimientos -->
-        <table>
+        <table data-cy="moveTable">
             <thead>
                 <tr>
                     <th>Move</th>
@@ -57,6 +57,7 @@
                 coordinates: false,
                 orientation: 'white',
                 autoCastle: false,
+                trustAllEvents: true, 
             });
 
             const playerColor = computed(() => {
@@ -65,11 +66,9 @@
         
             const store = useCounterStore();
             const fen = ref('start');
-            const gameID = computed(() => store.gameId.value);
-            const token = computed(() => store.token.value);
 
-            alert('gameID: ' + store.gameId.value);
-            alert('token ' + store.token.value);
+            const gameID = computed(() => store.getGameId());
+            const token = computed(() => store.getToken());
 
             const materialAdvantage = ref(0);
             const moves = ref([]);
@@ -87,35 +86,43 @@
 
             }; 
 
-            onMounted(() => {
+            onMounted(async () => {
+                watch([gameID, token], ([newGameId, newToken]) => {
+                    if (newGameId && newToken) {
+                        initializeSocket();
+                    }
+                });
+
+                const initializeSocket = () => {
+                    alert('initializeSocket');
+                    const url = `ws://localhost:8000/ws/play/${gameID.value}/?token=${token.value}`;
+                    socket.value = new WebSocket(url);
+
+                    socket.value.onmessage = (event) => {
+                        const data = JSON.parse(event.data);
+                        if (data.type === 'move') {
+                            boardAPI.value?.move(data.move);
+                        }
+                    };
+                    socket.value.onopen = () => {
+                        console.log('Connected to the server');
+                    };
+                    socket.value.onerror = (error) => {
+                        console.error('Error:', error);
+                    };
+                    socket.value.onclose = () => {
+                        console.log('Connection closed');
+                    };
+                };
+
                 
-
-                const url = `ws://localhost:8000/ws/play/${gameID.value}/?token=${token.value}`;
-                socket.value = new WebSocket(url);
-
-                socket.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                if (data.type === 'move') {
-                boardAPI.value?.move(data.move);
-                }
-                };
-                socket.onopen = () => {
-                    console.log('Connected to the server');
-                };
-                socket.onerror = (error) => {
-                    console.error('Error:', error);
-                };
-                socket.onclose = () => {
-                    console.log('Connection closed');
-                }; 
-
-
                 watch(moves, () => {
                     const movesTableContainer = document.querySelector('.moves-table-container');
                     if (movesTableContainer) {
                         movesTableContainer.scrollTop = movesTableContainer.scrollHeight;
                     }
                 });
+
             });
 
             const handleCheckmate = (isMated) => { 

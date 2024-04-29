@@ -14,7 +14,7 @@
 					placeholder="Email"
 					v-model="email"
 					type="email"
-					data-cy="email"
+					data-cy="username"
 					required
 				> 
 				<!--Password-->
@@ -26,7 +26,9 @@
 					required
 				>
 				<!--Botón de LogIn-->
-				<button type="submit" value="LogIn">Log In</button>
+				<button type="submit" value="LogIn" data-cy="login-button">Log In</button>
+				<!--Mensaje de error-->
+				<div data-cy="error-message">{{ errorMessage }}</div>
 				<p>
 					Welcome to our chess page. If you want to kwnow what led us to create yet another chess site, then read on... <router-link to="/here">here</router-link>
 				</p>
@@ -52,6 +54,8 @@
 			const email = ref(''); 
 			const password = ref('');
 			const router = useRouter();
+			// Manejo del error al hacer login 
+			const errorMessage = ref(''); 
 
 			const logIn = async () => {
 				// Llamo a la api para loguearme y aquí me devuelve el token
@@ -76,13 +80,15 @@
 
 					// Le dirigimos a la pagina de create game 
 					router.push('/creategame'); // Redirige al usuario a la pantalla de inicio de sesión
+				} else {
+					errorMessage.value = 'Error: Invalid username or password'; 
 				}
 			}
 
 			return {
 				email, 
 				password, 
-
+				errorMessage, 
 				logIn, 
 			}
 		}, 

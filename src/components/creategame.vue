@@ -1,27 +1,31 @@
 <template> 
   <div class="container" :style="{ backgroundImage: `url(${backgroundImage})` }">
-		<div class="wrapper">
-			<h1>Create Game</h1>
-			<!--Combobox-->
-			<select v-model="selectedColor" name="Select a game">
-				<option value="" disabled selected>Select a game</option>
-				<option value="join-any-game">Join Any Game</option>
-				<option value="join-specific-game">Join Specific Game</option>
-			</select>
-			<!--Si selecciona un juego especifico -> tiene que introducir su game id-->
-			<input 
-				v-if="selectedColor === 'join-specific-game'"
-				placeholder="Game ID"
+        <div class="wrapper">
+            <h1>Create Game</h1>
+            <!--Combobox-->
+            <select v-model="selectedColor" name="Select a game" id="selectGame">
+                <option value="" disabled selected>Select a game</option>
+                <option value="game_join_any">Join any game</option>
+                <option value="Join specific game (gameID required)">Join specific game (gameID required)</option>
+            </select> 
+            <!--Si selecciona un juego especifico -> tiene que introducir su game id-->
+			<input label="Enter gameID"
+				v-if="selectedColor === 'Join specific game (gameID required)'"
 				type="text"
-			>
-			<!--Boton de crear juego-->
-			<button @click="createGame">Create Game</button>
-		</div>
-	</div>
+				data-cy="gameID"
+				v-model="gameID"
+				placeholder="Enter gameID"
+			> 
+            <!--Boton de crear juego-->
+            <button @click="createGame" data-cy="createGame-button">Create Game</button>
+			<!--Mensaje de error-->
+			<div data-cy="error-message">{{ errorMessage }}</div>
+        </div>
+    </div>
 </template>
 
 <script>
-	import { ref } from 'vue';
+	import { onMounted, ref } from 'vue';
 	import backgroundImage from '/images/pieza-ajedrez-dramatica.jpg'
 	import { useCounterStore } from '../stores/counter.js';
 	import { useRouter } from 'vue-router';
@@ -31,17 +35,19 @@
 		name: 'creategame', 
 		setup() {
 			const selectedColor = ref(''); 
+			const gameID = ref('Enter gameID');
+			const errorMessage = ref('');
 			const store = useCounterStore();
 			const router = useRouter();
 
 			// Funcion para crear un juego 
 			const createGame = async () => {
 				// Join Specific game -> funcionalidad no implementada
-				if (selectedColor.value === 'join-specific-game') {
+				if (selectedColor.value === 'Join specific game (gameID required)') {
 					console.log('Creating game...');
 				}
 				// Join Any Game -> Petición a la api 
-				else if (selectedColor.value === 'join-any-game') {
+				else if (selectedColor.value === 'game_join_any') {
 					const api_call_create_game = await fetch ('https://practica3-psi.onrender.com/api/v1/games/', {
 						method: 'POST',
 						headers: { 
@@ -58,14 +64,25 @@
 
 						// Redirigir a la página de juego
 						router.push('/play')
+					} else {
+						// Alerta diciendo que el juego está activo
+						const response = await api_call_create_game.json(); 
+						console.log(store.gameId);
+						if (response.detail === 'Create Error: Game is already active') {
+							alert('You have an active game. Please finish it before creating a new one.')
+							router.push('/play')
+						}
+						errorMessage.value = "Error: Cannot create game"
 					}
 				}
 			}; 
 
 			return {
-					selectedColor, 
-					backgroundImage, 
-					createGame, 
+				selectedColor, 
+				backgroundImage, 
+				gameID, 
+				errorMessage, 
+				createGame, 
 			}
 		}
 	}
