@@ -9,12 +9,11 @@
                 <option value="Join specific game (gameID required)">Join specific game (gameID required)</option>
             </select> 
             <!--Si selecciona un juego especifico -> tiene que introducir su game id-->
-			<input label="Enter gameID"
+			<label for="gameID" data-cy="gameID" v-if="selectedColor === 'Join specific game (gameID required)'">Enter gameID</label>
+			<input
 				v-if="selectedColor === 'Join specific game (gameID required)'"
 				type="text"
-				data-cy="gameID"
-				v-model="gameID"
-				placeholder="Enter gameID"
+				placeholder="gameID"
 			> 
             <!--Boton de crear juego-->
             <button @click="createGame" data-cy="createGame-button">Create Game</button>
@@ -35,7 +34,6 @@
 		name: 'creategame', 
 		setup() {
 			const selectedColor = ref(''); 
-			const gameID = ref('Enter gameID');
 			const errorMessage = ref('');
 			const store = useCounterStore();
 			const router = useRouter();
@@ -80,7 +78,6 @@
 			return {
 				selectedColor, 
 				backgroundImage, 
-				gameID, 
 				errorMessage, 
 				createGame, 
 			}
