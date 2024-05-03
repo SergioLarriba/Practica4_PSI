@@ -32,8 +32,6 @@ describe('Login Test', () => {
 
     // check that there is a place to type the game ID
     cy.get('[data-cy="gameID"]').contains('Enter gameID') 
-    // Nuestro cambio -> de contains a should placeholder
-    // cy.get('[data-cy="gameID"]').should('have.attr', 'placeholder', 'Enter gameID') 
     });
 
     // try to create a game before login

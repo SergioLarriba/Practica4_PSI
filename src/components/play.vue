@@ -1,169 +1,198 @@
 <template>
-    <div>
-        <TheChessboard
-            :board-config="boardConfig"
-            :player-color="playerColor"
-            @board-created="(api) => (boardAPI = api)"
-            @checkmate="handleCheckmate"
-            @move="handleMove"
-            @stalemate="handleStalemate"
-            @draw="handleDraw"
-            @promotion="handlePromotion"
+    <TheChessboard
+        :board-config="boardConfig"
+        :player-color="playerColor"
+        @board-created="(api) => (boardAPI = api)"
+        @checkmate="handleCheckmate"
+        @move="handleMove"
+        @stalemate="handleStalemate"
+        @draw="handleDraw"
+        @promotion="handlePromotion"
         >
-        </TheChessboard>
-
-        <div>
-            <p>Game ID: {{ gameID }}</p>
-            <p>material Advantage: {{ materialAdvantage }}</p>
+    </TheChessboard>
+    <table class="tabla" data-cy="moveTable">
+        <tr v-for="(move, index) in moves" :key="index">
+            <td>{{ move.white}}</td>
+            <td>{{ move.black }}</td>
+        </tr>
+    </table>
+    <div>
+        <button @click="boardConfig.coordinates = !boardConfig.coordinates">
+            Toggle coordinates
+        </button>
+        <button @click="boardConfig.viewOnly = !boardConfig.viewOnly">
+            Toggle view only
+        </button>
+        <button
+            @click="boardConfig.animation.enabled = !boardConfig.animation.enabled"
+        >
+            Toggle animations
+        </button>
+        <button
+            @click="boardConfig.draggable.enabled = !boardConfig.draggable.enabled"
+        >
+            Toggle draggable
+        </button>
+        <p>Game ID: {{ gameID }}</p>
         </div>
-
-        <!-- Tabla movimientos -->
-        <table data-cy="moveTable">
-            <thead>
-                <tr>
-                    <th>Move</th>
-                    <th>White</th>
-                    <th>Black</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(move, index) in moves" :key="index">
-                    <td>{{ index + 1 }}</td>
-                    <td>{{ move.player }}</td>
-                    <td>{{ move.move_from }} - {{ move.move_to }}</td>
-                </tr>
-            </tbody>
-        </table>
+    <div
+        v-if="checkmated && mated==='white'"
+        data-cy="winMsg"
+        class="alert alert-success"
+        role="alert"
+    >
+        Black Wins
+    <button @click="router.push('/creategame')" data-cy=createGame-button-in-play>PLAY NEW GAME</button>
+    </div>
+    <div
+        v-if="checkmated && mated==='black'"
+        data-cy="winMsg"
+        class="alert alert-success"
+        role="alert"
+    >
+        White Wins
+    <button @click="router.push('/creategame')" data-cy=createGame-button-in-play>PLAY NEW GAME</button>
+    </div>
+    <div
+        v-if="draw"
+        data-cy="winMsg"
+        class="alert alert-success"
+        role="alert"
+    >
+        Draw
+    <button @click="router.push('/creategame')" data-cy=createGame-button-in-play>PLAY NEW GAME</button>
+    </div>
+    <div
+        v-if="stalemate"
+        data-cy="winMsg"
+        class="alert alert-success"
+        role="alert"
+    >
+        Stalemate
+    <button @click="router.push('/creategame')" data-cy=createGame-button-in-play>PLAY NEW GAME</button>
     </div>
 </template>
 
-
-<script>
+<script setup>
+    import { ref, reactive, onMounted } from 'vue';
     import { TheChessboard } from 'vue3-chessboard';
-    import { ref, onMounted, watch, computed, reactive } from 'vue';
-    import { useCounterStore } from '../stores/counter.js';
     import 'vue3-chessboard/style.css';
+	import { useCounterStore } from '../stores/counter.js';
 
+    // Componentes del juego
+    const moves = ref([]);
+    const store = useCounterStore();
+    const gameID = store.gameID;
+    const playerColor = store.color;
+    // Eventos
+    const checkmated = ref(false);
+    const mated = ref('');
+    const draw = ref(false);
+    const stalemate = ref(false);
+    // Socket 
+    const url = 'ws://127.0.0.1:8000/ws/play/' + store.gameId + '/?' + store.token;
+    const socket = new WebSocket(url);
+    let boardAPI;
 
-    let boardAPI = 'white';
-
-    export default {
-        components: {
-            TheChessboard,
+    // Configuración del tablero
+    const boardConfig = reactive({
+        coordinates: true,
+        viewOnly: false,
+        animation: { enabled: true },
+        draggable: { enabled: true },
+        fen: store.board_state,
+        orientation: playerColor,
+        events: {
+            move: (from, to) => {
+                console.log("Move event received:", from, to);
+            },
         },
-        setup() {
+        trustAllEvents: true,
+    });
 
-            const boardConfig = reactive({
-                coordinates: false,
-                orientation: 'white',
-                autoCastle: false,
-                trustAllEvents: true, 
+    function handleCheckmate(isMated) {
+        checkmated.value = true;
+        mated.value = isMated;
+    }
+
+    function handleStalemate () {
+        stalemate.value = true;
+        alert('Stalemate');
+    }
+    
+    function handleDraw() {
+        draw.value = true;
+        alert('Draw');
+    }
+
+    function handlePromotion () {
+        alert('Promotion');
+    }
+
+    function handleMove(move) {
+        let color;
+        if (store.color === 'black') {
+            color = 'b';
+        } else if (store.color === 'white') {
+            color = 'w';
+        }
+        // Sólo mando el mensaje si soy el jugador logueado 
+        if(move.color === color) {
+            moves.value.push({
+                white: move.color === 'w' ? move.from + move.to : '',
+                black: move.color === 'b' ? move.from + move.to : ''
             });
 
-            const playerColor = computed(() => {
-                return boardAPI.value;
-            });
-        
-            const store = useCounterStore();
-            const fen = ref('start');
-
-            const gameID = computed(() => store.getGameId());
-            const token = computed(() => store.getToken());
-
-            const materialAdvantage = ref(0);
-            const moves = ref([]);
-
-            const socket = ref(null);
-
-            const handleMove = (move) => {
-                fen.value = move.fen;
-                const newMove = {
-                    player: move.color === 'w' ? 'White' : 'Black',
-                    move_from: move.from,
-                    move_to: move.to,
-                };
-                moves.value.push(newMove);
-
-            }; 
-
-            onMounted(async () => {
-                watch([gameID, token], ([newGameId, newToken]) => {
-                    if (newGameId && newToken) {
-                        initializeSocket();
-                    }
-                });
-
-                const initializeSocket = () => {
-                    alert('initializeSocket');
-                    const url = `ws://localhost:8000/ws/play/${gameID.value}/?token=${token.value}`;
-                    socket.value = new WebSocket(url);
-
-                    socket.value.onmessage = (event) => {
-                        const data = JSON.parse(event.data);
-                        if (data.type === 'move') {
-                            boardAPI.value?.move(data.move);
-                        }
-                    };
-                    socket.value.onopen = () => {
-                        console.log('Connected to the server');
-                    };
-                    socket.value.onerror = (error) => {
-                        console.error('Error:', error);
-                    };
-                    socket.value.onclose = () => {
-                        console.log('Connection closed');
-                    };
-                };
-
-                
-                watch(moves, () => {
-                    const movesTableContainer = document.querySelector('.moves-table-container');
-                    if (movesTableContainer) {
-                        movesTableContainer.scrollTop = movesTableContainer.scrollHeight;
-                    }
-                });
-
-            });
-
-            const handleCheckmate = (isMated) => { 
-            alert(`${isMated} is mated`);
-            };
-
-            const handlePromotion = (promotion) => {
-                alert(`Promotion to ${promotion}`);
-            };
-
-            const handleStalemate = () => {
-                alert('Stalemate');
-            };
-
-            const handleDraw = () => {
-                alert('Draw');
-            };
-
-
-            return {
-                fen,
-                gameID,
-                materialAdvantage,
-                moves,
-                handleMove,
-                handleCheckmate,
-                handlePromotion,
-                handleStalemate,
-                handleDraw,
-                boardConfig,
-                playerColor,
+            // Si está abierto el WebSocket, envío el movimiento
+            if (socket.readyState === WebSocket.OPEN) {
+                const promotion = move.promotion ? move.promotion : "";
+                socket.send(JSON.stringify({
+                'type': 'move',
+                'from': move.from,
+                'to': move.to,
+                'playerID': store.playerID,
+                'promotion': promotion,
+                }));
+            } else {
+                console.error('WebSocket cerrado:', socket.readyState);
             }
         }
     }
+
+    function connectToWebSocket() {
+        socket.onopen = () => {
+            console.log('WebSocket Conectado');
+        };
+
+        // Función que se ejecuta cada vez que recibo un mensaje del socket 
+        socket.onmessage = (e) => {
+            const data = JSON.parse(e.data);
+
+            if (data.type === 'game') {
+                console.log("Game:", data);
+            } else if (data.type === 'move') {
+                console.log("Move:", data);
+                const uci_move = data.from + data.to + (data.promotion ? data.promotion : "");
+                if (store.playerID !== data.playerID && boardAPI) {
+                boardAPI.move(uci_move);
+                moves.value.push({
+                    white: store.color === 'white' ? data.from + data.to : '',
+                    black: store.color === 'black' ? data.from + data.to : '',
+                });
+                }
+            } else if (data.type === 'error') {
+                console.log('Error message received:', data.message);
+            }
+        };
+    }
+
+    // Conexion al WebSocket 
+    onMounted(() => {
+        connectToWebSocket();
+    });
 </script>
 
 
-<style>
-.moves-table-container {
-    max-height: 200px;
-    overflow-y: auto;
-}
+<style scoped>
 
 </style>

@@ -33,6 +33,7 @@ describe('Play a full game', () => {
         cy.wait(200)
         // check white move appears in table
         const [from, to] = tuple; // Destructure the tuple into to and from
+        console.log(`Move: ${from} to ${to}`);
         if (index % 2 === 0) {
           cy.log(`Counter: ${index}, Even`);
           cy.get('[data-cy=moveTable]' )

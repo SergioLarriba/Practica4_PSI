@@ -1,4 +1,3 @@
-<!--login.vue-->
 <template>
 	<form @submit.prevent="logIn"> 
 		<div class="container-padre">
@@ -48,7 +47,7 @@
 
 	export default {
 		// Nombre del componente 
-		name: "login", 
+		name: 'login-vue', 
 
 		setup() {
 			const email = ref(''); 
@@ -56,10 +55,12 @@
 			const router = useRouter();
 			// Manejo del error al hacer login 
 			const errorMessage = ref(''); 
+			const baseUrl = 'http://127.0.0.1:8000/api/v1'
+			// 'https://practica3-psi.onrender.com/api/v1/mytokenlogin/'
 
 			const logIn = async () => {
 				// Llamo a la api para loguearme y aquí me devuelve el token
-				const api_call_login = await fetch('https://practica3-psi.onrender.com/api/v1/mytokenlogin/', {
+				const api_call_login = await fetch(baseUrl + '/mytokenlogin/', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ username: email.value, password: password.value })

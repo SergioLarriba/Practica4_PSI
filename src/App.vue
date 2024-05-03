@@ -10,18 +10,9 @@
 
 
 <script>
-import signup from './components/signup.vue';
-import login from './components/login.vue';
-import logout from './components/logout.vue';
-
 export default {
   name: 'App', 
 
-  components: {
-    signup, 
-    login,
-    logout,
-  }, 
 }
 </script> 
 

@@ -29,6 +29,7 @@
 // fill free to modify the path to python3 and manage.py"
 const PYTHON = "/home/sergio/Documentos/3_Curso/2o_Cuatri/PSI/P4/p4_env/bin/python3"
 const MANAGE = "/home/sergio/Documentos/3_Curso/2o_Cuatri/PSI/P4/P3/manage.py"
+
 Cypress.Commands.add('delete_game', () => {
     var command = " # fill free to modify the path to python3 and manage.py" +
                 "\n" +

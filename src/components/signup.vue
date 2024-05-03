@@ -1,4 +1,3 @@
-<!--login.vue-->
 <template>
 	<form @submit.prevent="signUp"> 
 		<div class="container-padre">
@@ -48,7 +47,7 @@
 	
 	export default {
 		//Nombre del componente
-		name: "signup",  
+		name: "signup-vue",  
  
 		setup() {
 			const user = ref({
@@ -58,7 +57,9 @@
 			})
 
 			const router = useRouter();
+			const baseUrl = 'http://127.0.0.1:8000/api/v1'
 
+			// 'https://practica3-psi.onrender.com/api/v1/users/'
 			const signUp = async () => {
 				// Comprobamos que las contraseñas coincidan
 				if (user.value.password !== user.value.confirmPassword) {
@@ -67,7 +68,7 @@
 				}
 
 				// Llamo a la Api para registrarme 
-				const api_call = await fetch('https://practica3-psi.onrender.com/api/v1/users/', {
+				const api_call = await fetch(baseUrl + '/users/', {
 					method: 'POST',
 					headers: { 'Content-Type': 'application/json' },
 					body: JSON.stringify({ email: user.value.email, username: user.value.email, password: user.value.password })

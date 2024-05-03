@@ -24,19 +24,21 @@
 </template>
 
 <script>
-	import { onMounted, ref } from 'vue';
 	import backgroundImage from '/images/pieza-ajedrez-dramatica.jpg'
 	import { useCounterStore } from '../stores/counter.js';
 	import { useRouter } from 'vue-router';
+	import { ref } from 'vue';
 
 	export default {
 		// Nombre del componente 
-		name: 'creategame', 
+		name: 'create-game', 
 		setup() {
 			const selectedColor = ref(''); 
 			const errorMessage = ref('');
 			const store = useCounterStore();
 			const router = useRouter();
+			const baseUrl = 'http://127.0.0.1:8000/api/v1'
+			// 'https://practica3-psi.onrender.com/api/v1/games/'
 
 			// Funcion para crear un juego 
 			const createGame = async () => {
@@ -46,19 +48,32 @@
 				}
 				// Join Any Game -> Petición a la api 
 				else if (selectedColor.value === 'game_join_any') {
-					const api_call_create_game = await fetch ('https://practica3-psi.onrender.com/api/v1/games/', {
+					// Llamada a la api 
+					const api_call_create_game = await fetch (baseUrl + '/games/', {
 						method: 'POST',
 						headers: { 
 							'Content-Type': 'application/json',
-							'Authorization': `token ${store.token}` // Aquí se envía el token en el encabezado
+							'Authorization': 'token ' + store.token // Aquí se envía el token en el encabezado
 						},
 					}); 
 
 					if (api_call_create_game.ok) {
 						const response = await api_call_create_game.json();
 						const gameId = response.id;
+						console.log('Response:', response);
 						store.setGameId(gameId);
-						console.log(store.gameId);
+						console.log('playerId:', store.playerId);
+						console.log('whitePlayer:', response.whitePlayer);
+						console.log('blackPlayer:', response.blackPlayer);
+						// Asignar el color al jugador 
+						if (response.whitePlayer === store.playerId) {
+							store.color = 'white';
+						} if (response.blackPlayer === store.playerId){
+							store.color = 'black';
+						}
+						console.log('Color:', store.color);
+						// Guardar el tablero en pinia
+						store.board_state = response.board_state; 
 
 						// Redirigir a la página de juego
 						router.push('/play')
@@ -66,6 +81,8 @@
 						// Alerta diciendo que el juego está activo
 						const response = await api_call_create_game.json(); 
 						console.log(store.gameId);
+						// El token lo coge bien 
+						console.log(store.token);
 						if (response.detail === 'Create Error: Game is already active') {
 							alert('You have an active game. Please finish it before creating a new one.')
 							router.push('/play')

@@ -1,25 +1,24 @@
-<!--login.vue-->
 <template>
 	<h1 data-cy="logoutPage">Log Out</h1>
 	<button @click="logOut">LogOut</button>
 </template>
 
 <script>
-	import { ref } from 'vue';
 	import { useRouter } from 'vue-router';
 	import { useCounterStore } from '../stores/counter.js';
 
 	export default {
-		name: 'logout',
+		name: 'logout-vue',
 
 		setup() {
 			const router = useRouter(); 
 			const store = useCounterStore();
-
+			// 'https://practica3-psi.onrender.com/api/v1/token/logout/'
+			const baseUrl = 'http://127.0.0.1:8000/api/v1'
 			// Tengo que pasarle el token en la consulta para cerrar sesión 
 			const logOut = async () => {
 				console.log(store.token);
-				const api_call = await fetch('https://practica3-psi.onrender.com/api/v1/token/logout/', {
+				const api_call = await fetch(baseUrl + '/token/logout/', {
 					method: 'POST',
 					headers: { 
 						'Content-Type': 'application/json',

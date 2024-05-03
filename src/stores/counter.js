@@ -7,6 +7,8 @@ export const useCounterStore = defineStore('counter', () => {
   const playerId = ref('')
   const email = ref('')
   const gameId = ref('')
+  const color = ref('')
+  const board_state = ref('')
 
   const doubleCount = computed(() => count.value * 2)
   function increment() {
@@ -33,5 +35,23 @@ export const useCounterStore = defineStore('counter', () => {
     return token.value
   }
 
-  return { count, doubleCount, increment , setToken, getToken, setPlayerId, token, playerId, setEmail, email, gameId, setGameId, getGameId}
+  function getColor() {
+    return color.value
+  }
+
+  function setColor(value) {
+    color.value = value
+  }
+
+  function setBoardState(value) {
+    board_state.value = value
+  }
+
+  function getBoardState() {
+    return board_state.value
+  }
+
+  return { count, doubleCount, increment , setToken, getToken, 
+    setPlayerId, token, playerId, setEmail, email, gameId, setGameId, getGameId, 
+    color, setColor, getColor, board_state, setBoardState, getBoardState}
 })
