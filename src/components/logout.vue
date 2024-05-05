@@ -14,7 +14,8 @@
 			const router = useRouter(); 
 			const store = useCounterStore();
 			// 'https://practica3-psi.onrender.com/api/v1/token/logout/'
-			const baseUrl = 'http://127.0.0.1:8000/api/v1'
+			// const baseUrl = 'http://127.0.0.1:8000/api/v1'
+			const baseUrl = import.meta.env.VITE_DJANGOURL; 
 			// Tengo que pasarle el token en la consulta para cerrar sesión 
 			const logOut = async () => {
 				console.log(store.token);

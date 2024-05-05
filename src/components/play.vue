@@ -90,7 +90,10 @@
     const draw = ref(false);
     const stalemate = ref(false);
     // Socket 
-    const url = 'ws://127.0.0.1:8000/ws/play/' + store.gameId + '/?' + store.token;
+    //const url = 'wss://127.0.0.1:8000/ws/play/' + store.gameId + '/?' + store.token;
+    const baseUrl = import.meta.env.VITE_DJANGOURL_PLAY; 
+    const url = baseUrl + store.gameId + '/?' + store.token; 
+    console.log('URL:', url);
     const socket = new WebSocket(url);
     let boardAPI;
 

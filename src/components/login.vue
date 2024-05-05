@@ -55,10 +55,11 @@
 			const router = useRouter();
 			// Manejo del error al hacer login 
 			const errorMessage = ref(''); 
-			const baseUrl = 'http://127.0.0.1:8000/api/v1'
+			//const baseUrl = 'http://127.0.0.1:8000/api/v1'
 			// 'https://practica3-psi.onrender.com/api/v1/mytokenlogin/'
+			const baseUrl = import.meta.env.VITE_DJANGOURL; 
 
-			const logIn = async () => {
+			const logIn = async () => { 
 				// Llamo a la api para loguearme y aquí me devuelve el token
 				const api_call_login = await fetch(baseUrl + '/mytokenlogin/', {
 					method: 'POST',

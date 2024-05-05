@@ -37,8 +37,9 @@
 			const errorMessage = ref('');
 			const store = useCounterStore();
 			const router = useRouter();
-			const baseUrl = 'http://127.0.0.1:8000/api/v1'
+			// const baseUrl = 'http://127.0.0.1:8000/api/v1'
 			// 'https://practica3-psi.onrender.com/api/v1/games/'
+			const baseUrl = import.meta.env.VITE_DJANGOURL; 
 
 			// Funcion para crear un juego 
 			const createGame = async () => {
