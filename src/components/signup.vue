@@ -33,7 +33,7 @@
 				<button type="submit" value="SignUp" data-cy="signup-button">Sign Up</button> 
 			</div>
 			<aside>
-				<img src="images/chess_image.jpg" alt="">
+				<img src="/images/chess_image.jpg" alt="">
 			</aside>
 		</div>
 
