@@ -57,7 +57,7 @@
 			})
 
 			const router = useRouter();
-			const baseUrl = 'http://127.0.0.1:8000/api/v1'
+			const baseUrl = import.meta.env.VITE_DJANGOURL; 
 
 			// 'https://practica3-psi.onrender.com/api/v1/users/'
 			const signUp = async () => {
