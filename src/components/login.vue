@@ -33,7 +33,7 @@
 				</p>
 			</div>
 			<aside>
-				<img src="images/chess_image.jpg" alt="">
+				<img src="/images/chess_image.jpg" alt="">
 			</aside>
 		</div>
 
