@@ -69,19 +69,24 @@
 
 				// Guardo el token en pinia 
 				if (api_call_login.ok) {
-					const response = await api_call_login.json();
-					const token = response.auth_token;
-					const playerId = response.user_id; 
+					const responseText = await api_call_login.text();
+					if (responseText) {
+						const response = JSON.parse(responseText);
+						const token = response.auth_token;
+						const playerId = response.user_id; 
 
-					// Usamos Pinia para guardar el token 
-					const store = useCounterStore();
-					store.setToken(token);
-					store.setPlayerId(playerId);
+						// Usamos Pinia para guardar el token 
+						const store = useCounterStore();
+						store.setToken(token);
+						store.setPlayerId(playerId);
 
-					console.log(store.token, store.playerId)
+						console.log(store.token, store.playerId)
 
-					// Le dirigimos a la pagina de create game 
-					router.push('/creategame'); // Redirige al usuario a la pantalla de inicio de sesión
+						// Le dirigimos a la pagina de create game 
+						router.push('/creategame'); // Redirige al usuario a la pantalla de inicio de sesión
+					} else {
+						errorMessage.value = 'Error: Invalid response from server'; 
+					}
 				} else {
 					errorMessage.value = 'Error: Invalid username or password'; 
 				}
