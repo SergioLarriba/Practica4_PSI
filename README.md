@@ -4,5 +4,3 @@ Repositorio de la pr√°ctica 4 de la asignatura PSI (Proyecto de Sistemas Inform√
 Se puede jugar online. 
 Desplegada en render (al igual que la parte del backend): https://practica4-psi.onrender.com
 
-![login](https://practica4-psi.onrender.com/log-in)
-![play](https://practica4-psi.onrender.com/play)
